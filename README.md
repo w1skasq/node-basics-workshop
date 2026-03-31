@@ -1,45 +1,22 @@
-const http = require('http');
-const url = require('url');
+# Практична робота №4: Manual HTTP Router
 
-const port = process.argv[2] || 3000;
+Об'єкт дослідження: створення HTTP-сервера на базі Node.js з використанням стандартних модулів `http` та `url`.
 
-const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  const path = parsedUrl.pathname;
-  const query = parsedUrl.query;
+## Склад проекту:
+* `root_route.js` — реалізація базового маршруту `/`.
+* `time_route.js` — реалізація маршруту `/time` з поверненням ISO-часу.
+* `echo_route.js` — обробка query-параметрів у маршруті `/echo`.
+* `sum_route.js` — реалізація математичного маршруту з валідацією вхідних даних.
+* `not_found_route.js` — підсумковий файл з повною маршрутизацією та обробкою помилок 404 у форматі JSON.
 
-  // 4.1 ROOT ROUTE: Текстове вітання
-  if (req.method === 'GET' && path === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Welcome to Manual HTTP Router');
-  } 
-  // 4.2 TIME ROUTE: JSON з поточним часом
-  else if (req.method === 'GET' && path === '/time') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ now: new Date().toISOString() }));
-  } 
-  // 4.3 ECHO ROUTE: Повернення повідомлення з query-параметра msg
-  else if (req.method === 'GET' && path === '/echo') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end(query.msg || '');
-  } 
-  // 4.4 SUM ROUTE: Математика (a + b) з валідацією чисел
-  else if (req.method === 'GET' && path === '/sum') {
-    const a = parseFloat(query.a);
-    const b = parseFloat(query.b);
-    if (!isNaN(a) && !isNaN(b)) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ sum: a + b }));
-    } else {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: "Invalid numbers" }));
-    }
-  }
-  // 4.5 NOT FOUND ROUTE: Обробка неіснуючих шляхів (JSON 404)
-  else {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: "Not found" }));
-  }
-});
+## Реалізований функціонал:
+1. **GET /** — текстове привітання (статус 200).
+2. **GET /time** — JSON-об'єкт з поточним часом (статус 200).
+3. **GET /echo?msg=...** — повернення тексту повідомлення (статус 200).
+4. **GET /sum?a=...&b=...** — обчислення суми або помилка 400 при некоректних даних.
+5. **Обробка 404** — повернення JSON `{"error": "Not found"}` для всіх неіснуючих маршрутів.
 
-server.listen(port);
+## Результат тестування:
+Проект успішно пройшов автоматизоване тестування (5/5 завдань виконано).
+
+![Результат виконання](result.png)
